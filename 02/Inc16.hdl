@@ -13,5 +13,6 @@ CHIP Inc16 {
     OUT out[16];
 
     PARTS:
-   // Put you code here:
+   // Just increment the input by 1 by adding 1 to the LSB.
+   Add16(a=in, b[0]=true, out=out);
 }

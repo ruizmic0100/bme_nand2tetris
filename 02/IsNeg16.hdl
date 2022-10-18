@@ -1,0 +1,10 @@
+// Additional Chip IsNeg16
+
+CHIP IsNeg16 {
+    IN in[16];
+    OUT out;
+
+    PARTS:
+    // if MSB == 1 then isNeg = 1:
+    And(a=in[15], b=true, out=out);
+}

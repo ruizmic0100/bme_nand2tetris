@@ -13,5 +13,12 @@ CHIP FullAdder {
         carry;   // Left bit of a + b + c
 
     PARTS:
-    // Put you code here:
+    // First HalfAdder calculates the sum of a and b and propogates it's delay to the second half adder.
+    HalfAdder(a=a, b=b, sum=sumab, carry=carryab);
+
+    // Second HalfAdder then calculates the sum of a and b with the Cin if present.
+    HalfAdder(a=sumab, b=c, sum=sum, carry=carryabc);
+
+    // Once both sums are calculated the carry out bits are propogated, as well.
+    Or(a=carryab, b=carryabc, out=carry);
 }

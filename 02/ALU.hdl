@@ -27,8 +27,8 @@
 // if (out < 0) set ng = 1
 
 CHIP ALU {
-    IN  
-        x[16], y[16],  // 16-bit inputs        
+    IN
+        x[16], y[16],  // 16-bit inputs
         zx, // zero the x input?
         nx, // negate the x input?
         zy, // zero the y input?
@@ -36,11 +36,43 @@ CHIP ALU {
         f,  // compute out = x + y (if 1) or x & y (if 0)
         no; // negate the out output?
 
-    OUT 
+    OUT
         out[16], // 16-bit output
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    /** Pre-setting the x input */
+    // If zx == 1 then x = 0 then if nx == 1 then x = !x:
+    Mux16(a=x, b=false, sel=zx, out=zeroprex);
+    Not16(in=zeroprex, out=notprex);
+    Mux16(a=zeroprex, b=notprex, sel=nx, out=prex);
+
+    /** Pre-setting the y input */
+    // If zy == 1 then y = 0 then if ny == 1 then y = !y:
+    Mux16(a=y, b=false, sel=zy, out=zeroprey);
+    Not16(in=zeroprey, out=notprey);
+    Mux16(a=zeroprey, b=notprey, sel=ny, out=prey);
+
+    /** Selecting between '+' or '&' after pre-setting the inputs */
+    // If f == 1 then out=x+y else out = x&y:
+    Add16(a=prex, b=prey, out=sum);
+    And16(a=prex, b=prey, out=and);
+    Mux16(a=and, b=sum, sel=f, out=result);
+
+    /** Post setting the output after computation */
+    // If no == 1 then out = !out:
+    Not16(in=result, out=notresult);
+    Mux16(a=result, b=notresult, sel=no, out=postresult); 
+
+    /** Post result flags */
+    // if out == 0 then zr=1:
+    Or16Way(in=postresult, out=postresultiszero);
+    Mux(a=true, b=false, sel=postresultiszero, out=zr);
+    // if out < 0 then ng = 1 else ng = 0:
+    IsNeg16(in=postresult, out=signbit);
+    Mux(a=false, b=true, sel=signbit, out=ng);
+
+    // Final result:
+    Or16(a=postresult, b=false, out=out);
 }
