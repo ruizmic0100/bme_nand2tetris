@@ -13,9 +13,24 @@ CHIP Xor {
     OUT out;
 
     PARTS:
-    Not (in=a, out=nota);
-    Not (in=b, out=notb);
-    And (a=a, b=notb, out=aAndNotb);
-    And (a=nota, b=b, out=notaAndb);
-    Or  (a=aAndNotb, b=notaAndb, out=out);
+    // Inverting inputs for later use.
+    Not(in=a, out=nota);
+    Not(in=b, out=notb);
+
+    /**
+    *           0101
+    * aandnotb   &&  => 0100
+    *           1100
+    *           0011
+    * bandnota   &&  => 0010
+    *           1010
+    */
+    And(a=a, b=notb, out=aandnotb);
+    And(a=nota, b=b, out=bandnota);
+
+    /**
+    *      0100
+    * out   ||   => 0110
+    *      0010
+    Or(a=aandnotb, b=bandnota, out=out);
 }

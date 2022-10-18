@@ -14,5 +14,13 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // Inverting select to split select input.
+    Not(in=sel, out=notsel);
+
+    // Output a's value if select was 0 or b's value if select was 1.
+    And(a=notsel, b=a, out=sela);
+    And(a=sel,    b=b, out=selb);
+
+    // Combining results incase a and or b equal 1.
+    Or(a=sela, b=selb, out=out);
 }

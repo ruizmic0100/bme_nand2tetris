@@ -14,5 +14,12 @@ CHIP DMux {
     OUT a, b;
 
     PARTS:
-    // Put your code here:
+    // Inverting to split select.
+    Not(in=sel, out=notsel);
+
+    // outputting the first bit when select equals 0.
+    And(a=notsel, b=in, out=a);
+
+    // Outputting the second bit when select equals 1.
+    And(a=sel, b=in, out=b);
 }

@@ -16,5 +16,10 @@ CHIP Mux4Way16 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // Using two mux16's to handle a & b as a pair and c & d as another pair.
+    // Each pair will have the select bit choosing between themselves.
+    // Then have a final mux16 handle choosing between the pair of mux16's.
+    Mux16(a=a, b=b, sel=sel[0], out=outab);
+    Mux16(a=c, b=d, sel=sel[0], out=outcd);
+    Mux16(a=outab, b=outcd, sel=sel[1], out=out);
 }

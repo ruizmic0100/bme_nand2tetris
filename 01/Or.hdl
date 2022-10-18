@@ -14,5 +14,23 @@ CHIP Or {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    /** Invert the inputs so that we have the correct input sequence 
+    *   where we have 1 on both inputs at the beginning
+    *   a 0101 => 1010
+    *   b 0011 => 1100
+    */
+    Not(in=a, out=nota);
+    Not(in=b, out=notb);
+
+    /** And the inverted inputs together.
+    *       1010
+    * notab      => 1000
+    *       0011
+    */
+    And(a=nota, b=notb, out=notab);
+
+    /** Invert the output of the anded inverted inputs to finally get OR gate behavior.
+    * notab 1000 => 0111
+    */
+    Not(in=notab, out=out);
 }
